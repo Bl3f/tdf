@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "tdf"
+version = "0.1.0"
+description = ""
+authors = ["Christophe Blefari <hi@blef.fr>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+dagster-webserver = "^1.4.6"
+dagster = "^1.4.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.dagster]
+module_name = "tdf"
