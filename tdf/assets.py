@@ -1,5 +1,5 @@
 import pandas as pd
-from dagster import DailyPartitionsDefinition, asset
+from dagster import DailyPartitionsDefinition, asset, StaticPartitionsDefinition
 
 from tdf.contracts import get_contract
 from tdf.resources import GoogleSheetResource, PostgresResource
@@ -7,6 +7,8 @@ from tdf.resources import GoogleSheetResource, PostgresResource
 race_contract = get_contract("race")
 riders_contract = get_contract("riders")
 stages_info_contract = get_contract("stages_info")
+stages_contract = get_contract("stages")
+stages_dagster_type = stages_contract.get_dagster_typing()
 
 
 @asset(
@@ -49,4 +51,37 @@ def stages_info(sheets: GoogleSheetResource) -> pd.DataFrame:
     return sheets.read(
         sheet_id="1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY",
         sheet_name="stages_info",
+    )
+
+
+@asset(
+    compute_kind="pandas",
+    partitions_def=StaticPartitionsDefinition(
+        [f"{str(i).zfill(2)}" for i in range(1, 22)]
+    ),
+    dagster_type=stages_dagster_type,
+    group_name="local",
+)
+def stages_partitioned(context) -> pd.DataFrame:
+    partition = context.asset_partition_key_for_output()
+
+    df = pd.read_csv(
+        f"./tdf/data/stages/{partition}.csv",
+        sep=";",
+        dtype={"sumcategory": str},
+    )
+
+    return df
+
+
+@asset(
+    compute_kind="pandas",
+    dagster_type=stages_dagster_type,
+    group_name="lake",
+)
+def stages(stages_partitioned) -> pd.DataFrame:
+    return (
+        pd.concat(stages_partitioned)
+        .reset_index()
+        .rename(columns={"level_0": "stage_id", "level_1": "index"})
     )

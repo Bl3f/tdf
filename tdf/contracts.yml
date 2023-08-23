@@ -157,3 +157,46 @@ datasets:
       - name: end_label
         type: str
         description: Official end label.
+  - name: stages
+    type: csv
+    description: Official GPS tracks of the stages, the CSV is sorted from the beginning to the end.
+    columns:
+      - name: latitude
+        type: float
+        description: Latitude of the point.
+      - name: longitude
+        type: float
+        description: Longitude of the point.
+      - name: altitude
+        type: float
+        description: Altitude of the point.
+      - name: slope
+        type: int
+        description: Compute slope of the point.
+      - name: dvdone
+        type: int
+        description: How much altitude difference has been done.
+      - name: dvrest
+        type: int
+        description: How much altitude difference remains.
+      - name: kmdone
+        type: float
+        description: How many kms has been done.
+      - name: kmto
+        type: float
+        description: How many kms remains.
+      - name: cpnumero
+        type: float
+        description: Checkpoint number.
+        options:
+          ignore_missing_vals: true
+      - name: cptype
+        type: str
+        description: The type of checkpoint (sprint, summit, etc.).
+        options:
+          ignore_missing_vals: true
+      - name: sumcategory
+        type: str
+        description: Category of the summit (HC, 1, 2, 3).
+        options:
+          ignore_missing_vals: true
