@@ -1,8 +1,26 @@
 import pandas as pd
-from dagster import DailyPartitionsDefinition, asset, StaticPartitionsDefinition
+from dagster import (
+    AssetKey,
+    DailyPartitionsDefinition,
+    SourceAsset,
+    StaticPartitionsDefinition,
+    asset,
+)
 
 from tdf.contracts import get_contract
 from tdf.resources import GoogleSheetResource, PostgresResource
+
+public_race = SourceAsset(
+    key=AssetKey("postgres__public_race"),
+    description="A Postgres table containing race data.",
+    group_name="postgres",
+)
+
+sheet = SourceAsset(
+    key=AssetKey("sheet"),
+    description="A Google Sheet with stages and rider informations.",
+    group_name="sheet",
+)
 
 race_contract = get_contract("race")
 riders_contract = get_contract("riders")
@@ -12,6 +30,7 @@ stages_dagster_type = stages_contract.get_dagster_typing()
 
 
 @asset(
+    deps=[public_race],
     partitions_def=DailyPartitionsDefinition(
         start_date="2023-07-01", end_date="2023-07-24"
     ),
@@ -31,6 +50,7 @@ def race(context, postgres: PostgresResource) -> pd.DataFrame:
 
 
 @asset(
+    deps=[sheet],
     compute_kind="pandas",
     dagster_type=riders_contract.get_dagster_typing(),
     group_name="lake",
@@ -43,6 +63,7 @@ def riders(sheets: GoogleSheetResource) -> pd.DataFrame:
 
 
 @asset(
+    deps=[sheet],
     compute_kind="pandas",
     dagster_type=stages_info_contract.get_dagster_typing(),
     group_name="lake",
