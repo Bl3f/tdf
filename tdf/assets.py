@@ -2,7 +2,7 @@ import pandas as pd
 from dagster import DailyPartitionsDefinition, asset
 
 from tdf.contracts import get_contract
-from tdf.resources import PostgresResource
+from tdf.resources import GoogleSheetResource, PostgresResource
 
 race_contract = get_contract("race")
 riders_contract = get_contract("riders")
@@ -33,12 +33,11 @@ def race(context, postgres: PostgresResource) -> pd.DataFrame:
     dagster_type=riders_contract.get_dagster_typing(),
     group_name="lake",
 )
-def riders() -> pd.DataFrame:
-    sheet_id = "1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY"
-    sheet_name = "riders"
-    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-
-    return pd.read_csv(url)
+def riders(sheets: GoogleSheetResource) -> pd.DataFrame:
+    return sheets.read(
+        sheet_id="1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY",
+        sheet_name="riders",
+    )
 
 
 @asset(
@@ -46,9 +45,8 @@ def riders() -> pd.DataFrame:
     dagster_type=stages_info_contract.get_dagster_typing(),
     group_name="lake",
 )
-def stages_info() -> pd.DataFrame:
-    sheet_id = "1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY"
-    sheet_name = "stages_info"
-    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-
-    return pd.read_csv(url)
+def stages_info(sheets: GoogleSheetResource) -> pd.DataFrame:
+    return sheets.read(
+        sheet_id="1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY",
+        sheet_name="stages_info",
+    )

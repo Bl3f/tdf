@@ -2,7 +2,7 @@ from dagster import Definitions, EnvVar, load_assets_from_modules
 
 from . import assets
 from .io_manager import GCSParquetIOManager
-from .resources import GCSResource, PostgresResource
+from .resources import GCSResource, GoogleSheetResource, PostgresResource
 
 all_assets = load_assets_from_modules([assets])
 
@@ -21,5 +21,6 @@ defs = Definitions(
         "postgres": PostgresResource(
             uri=EnvVar("POSTGRES_URI"),
         ),
+        "sheets": GoogleSheetResource(),
     },
 )

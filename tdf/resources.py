@@ -20,7 +20,7 @@ class PostgresResource(ConfigurableResource):
         columns: Optional[List[str]] = [],
         partition_column: Optional[str] = None,
         partition_value: Optional[str] = None,
-    ):
+    ) -> pd.DataFrame:
         engine = create_engine(self.uri, echo=False)
         sql = f"""
             SELECT {','.join(columns) if columns else '*'}
@@ -28,6 +28,12 @@ class PostgresResource(ConfigurableResource):
             WHERE {partition_column} = '{partition_value}'
         """
         return pd.read_sql(sql, con=engine)
+
+
+class GoogleSheetResource(ConfigurableResource):
+    def read(self, sheet_id: str, sheet_name: str) -> pd.DataFrame:
+        url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+        return pd.read_csv(url)
 
 
 class GCSResource(DagsterGCSResource):
