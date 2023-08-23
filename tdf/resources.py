@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import pandas as pd
 from dagster import ConfigurableResource
@@ -11,12 +11,13 @@ class PostgresResource(ConfigurableResource):
     def read(
         self,
         table: str,
+        columns: Optional[List[str]] = [],
         partition_column: Optional[str] = None,
         partition_value: Optional[str] = None,
     ):
         engine = create_engine(self.uri, echo=False)
         sql = f"""
-            SELECT *
+            SELECT {','.join(columns) if columns else '*'}
             FROM {table}
             WHERE {partition_column} = '{partition_value}'
         """

@@ -1,6 +1,7 @@
 import pandas as pd
 from dagster import DailyPartitionsDefinition, asset
 
+from tdf.contracts import get_contract
 from tdf.resources import PostgresResource
 
 
@@ -13,9 +14,11 @@ from tdf.resources import PostgresResource
 )
 def race(context, postgres: PostgresResource) -> pd.DataFrame:
     partition_date_str = context.asset_partition_key_for_output()
+    contract = get_contract("race")
 
     return postgres.read(
         "race",
-        partition_column="updated_at",
+        columns=contract.get_column_names(),
+        partition_column=contract.partition_column,
         partition_value=partition_date_str,
     )

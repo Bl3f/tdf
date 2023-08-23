@@ -1,0 +1,38 @@
+datasets:
+  - name: race
+    type: postgres
+    description: Strava activity data for a specific rider, stage and time. An activity contains GPS and physical data that might be null. For a given rider + stage you get an activity timeseries.
+    partition_column: updated_at
+    columns:
+      - name: rider_slug
+        description: The Strava profile id.
+      - name: stage_id
+        description: The Tour stage id, from 1 to 21.
+      - name: activity_id
+        description: The Strava activity id, only useful for debugging.
+      - name: updated_at
+        description: When the data has been updated in the database.
+      - name: time
+        description: Time in seconds since the beginning of the activity.
+      - name: latitude
+        description: Latitude for the given time.
+      - name: longitude
+        description: Longitude for the given time.
+      - name: altitude
+        description: Altitude for the given time.
+      - name: temp
+        description: Temperature in celsius degrees.
+      - name: watts
+        description: Strava computed power.
+      - name: moving
+        description: A boolean field that indicates if the rider is moving.
+      - name: velocity_smooth
+        description: Speed computed by Strava in meters per second.
+      - name: grade_smooth
+        description: Grade smooth computed by Strava as percents of a grade.
+      - name: cadence
+        description: Rider rotation in rotations per minute.
+      - name: distance
+        description: Distance done since the beginning of the activity in meters.
+      - name: heartrate
+        description: Rider heartrate in beats per minute.
