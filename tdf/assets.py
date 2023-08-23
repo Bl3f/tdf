@@ -5,6 +5,8 @@ from tdf.contracts import get_contract
 from tdf.resources import PostgresResource
 
 race_contract = get_contract("race")
+riders_contract = get_contract("riders")
+stages_info_contract = get_contract("stages_info")
 
 
 @asset(
@@ -24,3 +26,29 @@ def race(context, postgres: PostgresResource) -> pd.DataFrame:
         partition_column=race_contract.partition_column,
         partition_value=partition_date_str,
     )
+
+
+@asset(
+    compute_kind="pandas",
+    dagster_type=riders_contract.get_dagster_typing(),
+    group_name="lake",
+)
+def riders() -> pd.DataFrame:
+    sheet_id = "1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY"
+    sheet_name = "riders"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+    return pd.read_csv(url)
+
+
+@asset(
+    compute_kind="pandas",
+    dagster_type=stages_info_contract.get_dagster_typing(),
+    group_name="lake",
+)
+def stages_info() -> pd.DataFrame:
+    sheet_id = "1L_jMRyK77c5TRFSt__1dX6v7xWjFygIuebYQ7xY7VnY"
+    sheet_name = "stages_info"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+    return pd.read_csv(url)

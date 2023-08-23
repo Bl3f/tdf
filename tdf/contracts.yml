@@ -85,3 +85,75 @@ datasets:
         options:
           ignore_missing_vals: true
           min_value: 0
+  - name: riders
+    type: sheets
+    description: List of all the 2023 Tour de France riders.
+    columns:
+      - name: name
+        type: str
+        description: Firstname and Lastname of the rider.
+      - name: slug
+        type: str
+        description: Official slug—a slug is a url compliant nickname.
+      - name: bib
+        type: int
+        description: Official rider number.
+        options:
+          min_value: 1
+          max_value: 218
+      - name: team
+        type: str
+        description: Team name of the rider.
+      - name: country
+        type: str
+        description: 3-letters country isocode.
+      - name: strava
+        type: str
+        description: Stava id, if null the rider is not on strava.
+      - name: height
+        type: int
+        description: Height in cm from procyclingstats.
+        options:
+          min_value: 100
+      - name: weight
+        type: float
+        description: Weight in kg from procyclingstats.
+        options:
+          ignore_missing_vals: true
+      - name: birthday
+        type: str
+        description: Birthdate from procyclingstats, but not in a nice date format. It has to be parsed.
+  - name: stages_info
+    type: sheets
+    description: Static information about stages.
+    columns:
+      - name: stage
+        type: int
+        description: The Tour stage id, from 1 to 21.
+      - name: date
+        type: str
+        description: The date the stage was held.
+      - name: start_latitude
+        type: float
+        description: Official start latitude (but hand-picked).
+      - name: start_longitude
+        type: float
+        description: Official start longitude (but hand-picked).
+      - name: start_0_latitude
+        type: float
+        description: Official km0 start latitude (but hand-picked).
+      - name: start_0_longitude
+        type: float
+        description: Official km0 start longitude (but hand-picked).
+      - name: end_latitude
+        type: float
+        description: Official end latitude (but hand-picked).
+      - name: end_longitude
+        type: float
+        description: Official end longitude (but hand-picked).
+      - name: start_label
+        type: str
+        description: Official start label.
+      - name: end_label
+        type: str
+        description: Official end label.

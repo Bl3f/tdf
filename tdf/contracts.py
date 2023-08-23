@@ -5,6 +5,12 @@ import yaml
 from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
 
 
+class ContractNotFoundError(Exception):
+    def __init__(self, contract_name):
+        self.contract_name = contract_name
+        super().__init__(f"Contract '{self.contract_name}' not found.")
+
+
 def get_pandas_column_type(name, type_, **kwargs):
     if type_ == "str":
         return PandasColumn.string_column(name, **kwargs)
@@ -69,4 +75,4 @@ def get_contract(dataset_name):
         if contract["name"] == dataset_name:
             return Dataset(**contract)
 
-    return None
+    raise ContractNotFoundError(dataset_name)
