@@ -42,6 +42,7 @@ stages_dagster_type = stages_contract.get_dagster_typing()
     compute_kind="pandas",
     group_name="lake",
     dagster_type=race_contract.get_dagster_typing(),
+    metadata={"contract": race_contract},
 )
 def race(context, postgres: PostgresResource) -> pd.DataFrame:
     partition_date_str = context.asset_partition_key_for_output()
@@ -59,6 +60,7 @@ def race(context, postgres: PostgresResource) -> pd.DataFrame:
     compute_kind="pandas",
     dagster_type=riders_contract.get_dagster_typing(),
     group_name="lake",
+    metadata={"contract": riders_contract},
 )
 def riders(sheets: GoogleSheetResource) -> pd.DataFrame:
     return sheets.read(
@@ -72,6 +74,7 @@ def riders(sheets: GoogleSheetResource) -> pd.DataFrame:
     compute_kind="pandas",
     dagster_type=stages_info_contract.get_dagster_typing(),
     group_name="lake",
+    metadata={"contract": stages_info_contract},
 )
 def stages_info(sheets: GoogleSheetResource) -> pd.DataFrame:
     return sheets.read(
@@ -87,6 +90,7 @@ def stages_info(sheets: GoogleSheetResource) -> pd.DataFrame:
     ),
     dagster_type=stages_dagster_type,
     group_name="local",
+    metadata={"contract": stages_contract},
 )
 def stages_partitioned(context) -> pd.DataFrame:
     partition = context.asset_partition_key_for_output()
@@ -104,6 +108,7 @@ def stages_partitioned(context) -> pd.DataFrame:
     compute_kind="pandas",
     dagster_type=stages_dagster_type,
     group_name="lake",
+    metadata={"contract": stages_contract},
 )
 def stages(stages_partitioned) -> pd.DataFrame:
     return (

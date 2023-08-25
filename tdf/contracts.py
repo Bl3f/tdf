@@ -4,6 +4,8 @@ from typing import List, Optional
 import yaml
 from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
 
+from dagster import TableColumn, TableSchema
+
 
 class ContractNotFoundError(Exception):
     def __init__(self, contract_name):
@@ -58,6 +60,14 @@ class Dataset:
         return create_dagster_pandas_dataframe_type(
             name=self.name,
             columns=self.get_pandas_schema(),
+        )
+
+    def get_schema_display(self):
+        return TableSchema(
+            columns=[
+                TableColumn(name=col.name, type=col.type, description=col.description)
+                for col in self.columns
+            ]
         )
 
 

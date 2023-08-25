@@ -23,10 +23,13 @@ class PandasParquetIOManager(UPathIOManager):
     def dump_to_path(self, context: OutputContext, obj: pd.DataFrame, path: UPath):
         obj.to_parquet(path, storage_options={"token": self.credentials})
 
+        contract = context.metadata["contract"]
+
         context.add_output_metadata(
             {
                 "preview": MetadataValue.md(obj.head().to_markdown()),
                 "num_rows": len(obj),
+                "schema": MetadataValue.table_schema(contract.get_schema_display()),
             }
         )
 
