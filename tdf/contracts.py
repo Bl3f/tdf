@@ -70,6 +70,12 @@ class Dataset:
             ]
         )
 
+    def get_dbt_serialization(self):
+        return [
+            {"name": col.name, "type": col.type, "description": col.description}
+            for col in self.columns
+        ]
+
 
 def get_contracts():
     with open("./tdf/contracts.yml", "r") as f:

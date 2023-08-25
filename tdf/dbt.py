@@ -5,6 +5,7 @@ import yaml
 from dagster import DagsterInstance, SourceAsset, load_assets_from_modules
 
 from . import assets
+from .contracts import Dataset
 
 
 def generate_dbt_sources(sources_file):
@@ -20,6 +21,13 @@ def generate_dbt_sources(sources_file):
                     and len(asset.keys) == 1
                     and asset.group_names_by_key[asset.key] == group
                 ):
+                    contract = None
+                    if (
+                        hasattr(asset, "metadata_by_key")
+                        and "contract" in asset.metadata_by_key[asset.key]
+                    ):
+                        contract: Dataset = asset.metadata_by_key[asset.key]["contract"]
+
                     materialization = instance.get_latest_materialization_event(
                         asset.key
                     )
@@ -45,14 +53,16 @@ def generate_dbt_sources(sources_file):
                     )
                     source = {
                         "name": source_name,
+                        "description": contract.description if contract else "",
+                        "columns": contract.get_dbt_serialization() if contract else [],
                         "meta": {"dagster": {"asset_key": source_name}}
                         | external_location,
                     }
                     sources["tables"].append(source)
-
             except Exception as er:
+                raise er
                 pass
 
         with open(sources_file, "w") as f:
             f.write("version: 2\n\n")
-            yaml.dump({"sources": [sources]}, f)
+            yaml.dump({"sources": [sources]}, f, sort_keys=False)
