@@ -3,12 +3,13 @@ import json
 from typing import List, Optional
 
 import pandas as pd
-from dagster import ConfigurableResource
 from dagster_gcp import GCSResource as DagsterGCSResource
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
 from pydantic import Field
 from sqlalchemy import create_engine
+
+from dagster import ConfigurableResource
 
 
 class PostgresResource(ConfigurableResource):

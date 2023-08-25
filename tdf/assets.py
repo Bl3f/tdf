@@ -1,12 +1,17 @@
+from pathlib import Path
+from typing import Any, Mapping, Optional
+
 import pandas as pd
+from dagster_dbt import DagsterDbtTranslator, DbtCliResource, dbt_assets
+
 from dagster import (
     AssetKey,
     DailyPartitionsDefinition,
+    OpExecutionContext,
     SourceAsset,
     StaticPartitionsDefinition,
     asset,
 )
-
 from tdf.contracts import get_contract
 from tdf.resources import GoogleSheetResource, PostgresResource
 
@@ -106,3 +111,16 @@ def stages(stages_partitioned) -> pd.DataFrame:
         .reset_index()
         .rename(columns={"level_0": "stage_id", "level_1": "index"})
     )
+
+
+class CustomDagsterDbtTranslator(DagsterDbtTranslator):
+    def get_group_name(self, dbt_resource_props: Mapping[str, Any]) -> Optional[str]:
+        return "warehouse"
+
+
+@dbt_assets(
+    manifest=Path("analytics/target/manifest.json"),
+    dagster_dbt_translator=CustomDagsterDbtTranslator(),
+)
+def analytics_dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
+    yield from dbt.cli(["build"], context=context).stream()

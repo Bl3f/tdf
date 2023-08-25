@@ -1,4 +1,7 @@
 import pandas as pd
+from google.oauth2.service_account import Credentials
+from upath import UPath
+
 from dagster import (
     ConfigurableIOManagerFactory,
     InputContext,
@@ -6,9 +9,6 @@ from dagster import (
     OutputContext,
     UPathIOManager,
 )
-from google.oauth2.service_account import Credentials
-from upath import UPath
-
 from tdf.resources import GCSResource
 
 

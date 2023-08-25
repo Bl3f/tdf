@@ -13,6 +13,8 @@ psycopg2-binary = "^2.9.7"
 dagster-pandas = "^0.20.7"
 dagster-gcp = "^0.20.7"
 gcsfs = "^2023.6.0"
+dagster-dbt = "^0.20.7"
+dbt-duckdb = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.12.0"

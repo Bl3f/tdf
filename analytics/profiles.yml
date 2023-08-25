@@ -1,0 +1,36 @@
+analytics:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: le_tour.duckdb
+      schema: main
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        s3_access_key_id: "{{ env_var('ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('ACCESS_KEY_SECRET') }}"
+        s3_endpoint: storage.googleapis.com
+    dev:
+      type: duckdb
+      path: "md:letour_dev?motherduck_token={{ env_var('DUCKDB_TOKEN') }}"
+      schema: main
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        s3_access_key_id: "{{ env_var('ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('ACCESS_KEY_SECRET') }}"
+        s3_endpoint: storage.googleapis.com
+    prod:
+      type: duckdb
+      path: "md:letour_prod?motherduck_token={{ env_var('DUCKDB_TOKEN') }}"
+      schema: main
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        s3_access_key_id: "{{ env_var('ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('ACCESS_KEY_SECRET') }}"
+        s3_endpoint: storage.googleapis.com
