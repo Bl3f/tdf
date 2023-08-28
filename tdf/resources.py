@@ -1,10 +1,11 @@
 import base64
 import json
 import os
+from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
-from dagster_dbt import DbtCliResource
+from dagster_dbt import DbtCliResource, DagsterDbtCliRuntimeError
 from dagster_gcp import GCSResource as DagsterGCSResource
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
@@ -58,6 +59,25 @@ class GCSResource(DagsterGCSResource):
         return storage.client.Client(project=self.project, credentials=self.credentials)
 
 
-dbt = DbtCliResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))
-dbt_parse_invocation = dbt.cli(["parse"], manifest={}).wait()
-dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
+class DbtParseError(Exception):
+    def __init__(self, events):
+        message = " ".join(events)
+        super().__init__(message)
+
+
+class DbtResource(DbtCliResource):
+    def parse(self):
+        try:
+            dbt = DbtCliResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))
+            cli = dbt.cli(["parse"], manifest={})
+            events = []
+            for event in cli.stream_raw_events():
+                events.append(json.dumps(event.raw_event))
+
+            return cli.target_path.joinpath("manifest.json")
+        except DagsterDbtCliRuntimeError as er:
+            raise DbtParseError(events)
+
+
+dbt = DbtResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))
+dbt_manifest_path = dbt.parse()
