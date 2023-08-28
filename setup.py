@@ -14,7 +14,7 @@ setup(
         "gcsfs >= 2023.6.0",
         "dagster-dbt >= 0.20.7",
         "dbt-duckdb >= 1.6.0",
-        "bdp-contracts >= 0.1.0",
+        "bdp-contracts == 0.1.2",
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
 )
