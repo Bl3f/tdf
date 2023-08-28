@@ -1,8 +1,10 @@
 import base64
 import json
+import os
 from typing import List, Optional
 
 import pandas as pd
+from dagster_dbt import DbtCliResource
 from dagster_gcp import GCSResource as DagsterGCSResource
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
@@ -54,3 +56,8 @@ class GCSResource(DagsterGCSResource):
 
     def get_client(self) -> storage.Client:
         return storage.client.Client(project=self.project, credentials=self.credentials)
+
+
+dbt = DbtCliResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))
+dbt_parse_invocation = dbt.cli(["parse"], manifest={}).wait()
+dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
