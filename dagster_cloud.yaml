@@ -1,0 +1,4 @@
+locations:
+  - location_name: tdf
+    code_source:
+      package_name: tdf
