@@ -1,0 +1,175 @@
+version: 2
+
+sources:
+- name: lake
+  tables:
+  - name: race
+    description: Strava activity data for a specific rider, stage and time. An activity
+      contains GPS and physical data that might be null. For a given rider + stage
+      you get an activity timeseries.
+    columns:
+    - name: rider_slug
+      type: str
+      description: The Strava profile id.
+    - name: stage_id
+      type: int
+      description: The Tour stage id, from 1 to 21.
+    - name: activity_id
+      type: str
+      description: The Strava activity id, only useful for debugging.
+    - name: updated_at
+      type: date
+      description: When the data has been updated in the database.
+    - name: time
+      type: float
+      description: Time in seconds since the beginning of the activity.
+    - name: latitude
+      type: float
+      description: Latitude for the given time.
+    - name: longitude
+      type: float
+      description: Longitude for the given time.
+    - name: altitude
+      type: float
+      description: Altitude for the given time.
+    - name: temp
+      type: float
+      description: Temperature in celsius degrees.
+    - name: watts
+      type: float
+      description: Strava computed power.
+    - name: moving
+      type: float
+      description: A boolean field that indicates if the rider is moving.
+    - name: velocity_smooth
+      type: float
+      description: Speed computed by Strava in meters per second.
+    - name: grade_smooth
+      type: float
+      description: Grade smooth computed by Strava as percents of a grade.
+    - name: cadence
+      type: float
+      description: Rider rotation in rotations per minute.
+    - name: distance
+      type: float
+      description: Distance done since the beginning of the activity in meters.
+    - name: heartrate
+      type: float
+      description: Rider heartrate in beats per minute.
+    meta:
+      dagster:
+        asset_key: race
+      external_location: '''s3://{{ env_var("GCS_BUCKET_NAME") }}/race/*.parquet'''
+  - name: riders
+    description: List of all the 2023 Tour de France riders.
+    columns:
+    - name: name
+      type: str
+      description: Firstname and Lastname of the rider.
+    - name: slug
+      type: str
+      description: "Official slug\u2014a slug is a url compliant nickname."
+    - name: bib
+      type: int
+      description: Official rider number.
+    - name: team
+      type: str
+      description: Team name of the rider.
+    - name: country
+      type: str
+      description: 3-letters country isocode.
+    - name: strava
+      type: str
+      description: Stava id, if null the rider is not on strava.
+    - name: height
+      type: int
+      description: Height in cm from procyclingstats.
+    - name: weight
+      type: float
+      description: Weight in kg from procyclingstats.
+    - name: birthday
+      type: str
+      description: Birthdate from procyclingstats, but not in a nice date format.
+        It has to be parsed.
+    meta:
+      dagster:
+        asset_key: riders
+      external_location: '''s3://{{ env_var("GCS_BUCKET_NAME") }}/riders.parquet'''
+  - name: stages_info
+    description: Static information about stages.
+    columns:
+    - name: stage
+      type: int
+      description: The Tour stage id, from 1 to 21.
+    - name: date
+      type: str
+      description: The date the stage was held.
+    - name: start_latitude
+      type: float
+      description: Official start latitude (but hand-picked).
+    - name: start_longitude
+      type: float
+      description: Official start longitude (but hand-picked).
+    - name: start_0_latitude
+      type: float
+      description: Official km0 start latitude (but hand-picked).
+    - name: start_0_longitude
+      type: float
+      description: Official km0 start longitude (but hand-picked).
+    - name: end_latitude
+      type: float
+      description: Official end latitude (but hand-picked).
+    - name: end_longitude
+      type: float
+      description: Official end longitude (but hand-picked).
+    - name: start_label
+      type: str
+      description: Official start label.
+    - name: end_label
+      type: str
+      description: Official end label.
+    meta:
+      dagster:
+        asset_key: stages_info
+      external_location: '''s3://{{ env_var("GCS_BUCKET_NAME") }}/stages_info.parquet'''
+  - name: stages
+    description: Official GPS tracks of the stages, the CSV is sorted from the beginning
+      to the end.
+    columns:
+    - name: latitude
+      type: float
+      description: Latitude of the point.
+    - name: longitude
+      type: float
+      description: Longitude of the point.
+    - name: altitude
+      type: float
+      description: Altitude of the point.
+    - name: slope
+      type: int
+      description: Compute slope of the point.
+    - name: dvdone
+      type: int
+      description: How much altitude difference has been done.
+    - name: dvrest
+      type: int
+      description: How much altitude difference remains.
+    - name: kmdone
+      type: float
+      description: How many kms has been done.
+    - name: kmto
+      type: float
+      description: How many kms remains.
+    - name: cpnumero
+      type: float
+      description: Checkpoint number.
+    - name: cptype
+      type: str
+      description: The type of checkpoint (sprint, summit, etc.).
+    - name: sumcategory
+      type: str
+      description: Category of the summit (HC, 1, 2, 3).
+    meta:
+      dagster:
+        asset_key: stages
+      external_location: '''s3://{{ env_var("GCS_BUCKET_NAME") }}/stages.parquet'''
