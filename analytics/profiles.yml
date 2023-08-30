@@ -15,7 +15,7 @@ analytics:
     dev:
       type: duckdb
       path: "md:letour_dev?motherduck_token={{ env_var('DUCKDB_TOKEN') }}"
-      schema: main
+      schema: dev
       extensions:
         - httpfs
         - parquet
@@ -26,7 +26,7 @@ analytics:
     prod:
       type: duckdb
       path: "md:letour_prod?motherduck_token={{ env_var('DUCKDB_TOKEN') }}"
-      schema: main
+      schema: prod
       extensions:
         - httpfs
         - parquet
