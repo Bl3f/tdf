@@ -1,18 +1,17 @@
 import base64
 import json
 import os
-from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
-from dagster_dbt import DbtCliResource, DagsterDbtCliRuntimeError
+from dagster_dbt import DagsterDbtCliRuntimeError, DbtCliResource
 from dagster_gcp import GCSResource as DagsterGCSResource
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
 from pydantic import Field
 from sqlalchemy import create_engine
 
-from dagster import ConfigurableResource
+from dagster import ConfigurableResource, Failure, OpExecutionContext
 
 
 class PostgresResource(ConfigurableResource):
@@ -59,24 +58,44 @@ class GCSResource(DagsterGCSResource):
         return storage.client.Client(project=self.project, credentials=self.credentials)
 
 
-class DbtParseError(Exception):
-    def __init__(self, events):
-        message = " ".join(events)
-        super().__init__(message)
+class DbtCliError(Failure):
+    def __init__(self, action: str, events: List[any]):
+        super().__init__(
+            description=f"dbt {action} failed",
+            metadata={
+                "DBT LOG": "\n".join([event["info"]["msg"] for event in events]),
+            },
+        )
 
 
 class DbtResource(DbtCliResource):
-    def parse(self):
+    def do(self, action, *args, **kwargs):
+        events = []
         try:
-            dbt = DbtCliResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))
-            cli = dbt.cli(["parse"], manifest={})
-            events = []
+            cli = self.cli([action], **kwargs)
             for event in cli.stream_raw_events():
-                events.append(json.dumps(event.raw_event))
+                events.append(event.raw_event)
 
-            return cli.target_path.joinpath("manifest.json")
+                if action == "build":
+                    yield from event.to_default_asset_events(
+                        manifest=cli.manifest,
+                        dagster_dbt_translator=cli.dagster_dbt_translator,
+                    )
+
+            if action == "parse":
+                yield cli.target_path.joinpath("manifest.json")
+
         except DagsterDbtCliRuntimeError as er:
-            raise DbtParseError(events)
+            raise DbtCliError(
+                action=action,
+                events=events,
+            )
+
+    def parse(self):
+        return self.do("parse", manifest={}).__next__()
+
+    def build(self, context: OpExecutionContext):
+        yield from self.do("build", context=context)
 
 
 dbt = DbtResource(project_dir="analytics", target=os.getenv("DBT_TARGET"))

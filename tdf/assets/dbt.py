@@ -3,7 +3,7 @@ from typing import Any, Mapping, Optional
 from dagster_dbt import DagsterDbtTranslator, DbtCliResource, dbt_assets
 
 from dagster import OpExecutionContext
-from tdf.resources import dbt_manifest_path
+from tdf.resources import DbtResource, dbt_manifest_path
 
 
 class CustomDagsterDbtTranslator(DagsterDbtTranslator):
@@ -15,5 +15,5 @@ class CustomDagsterDbtTranslator(DagsterDbtTranslator):
     manifest=dbt_manifest_path,
     dagster_dbt_translator=CustomDagsterDbtTranslator(),
 )
-def analytics_dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
-    yield from dbt.cli(["build"], context=context).stream()
+def analytics_dbt_assets(context: OpExecutionContext, dbt: DbtResource):
+    yield from dbt.build(context)

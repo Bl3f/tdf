@@ -1,4 +1,5 @@
 import pandas as pd
+from bdp_contracts import get_contract
 
 from dagster import (
     AssetKey,
@@ -7,7 +8,6 @@ from dagster import (
     StaticPartitionsDefinition,
     asset,
 )
-from bdp_contracts import get_contract
 from tdf.resources import GoogleSheetResource, PostgresResource
 
 public_race = SourceAsset(

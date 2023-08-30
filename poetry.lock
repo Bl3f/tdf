@@ -135,7 +135,7 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "bdp-contracts"
-version = "0.1.0"
+version = "0.1.2"
 description = "blef data platform data contracts manager"
 category = "main"
 optional = false
@@ -1997,7 +1997,7 @@ backoff = [
     {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
 ]
 bdp-contracts = [
-    {file = "bdp-contracts-0.1.0.tar.gz", hash = "sha256:e8f0f86fd9f3574a1858501b1c70de241d2422efc3bc3dc42ebd56bc8e142286"},
+    {file = "bdp-contracts-0.1.2.tar.gz", hash = "sha256:1da20289579f9b30dace5e675c35d4e7f493f0ba67944fde6c22febdffa774a2"},
 ]
 black = [
     {file = "black-23.7.0-cp310-cp310-macosx_10_16_arm64.whl", hash = "sha256:5c4bc552ab52f6c1c506ccae05681fab58c3f72d59ae6e6639e8885e94fe2587"},

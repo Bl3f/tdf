@@ -1,11 +1,10 @@
 import click
 import yaml
-
 from bdp_contracts import Dataset, get_contracts
 
 
 @click.command()
-@click.argument('sources_file')
+@click.argument("sources_file")
 def generate_dbt_sources(sources_file):
     sources = {}
     contract: Dataset
@@ -23,7 +22,10 @@ def generate_dbt_sources(sources_file):
                 "name": contract.name,
                 "description": contract.description,
                 "columns": contract.get_dbt_serialization(),
-                "meta": {"dagster": {"asset_key": contract.name}, "external_location": external_location}
+                "meta": {
+                    "dagster": {"asset_key": contract.name},
+                    "external_location": external_location,
+                },
             }
             sources["tables"].append(source)
 
