@@ -95,4 +95,3 @@ WHERE
   AND r.latitude BETWEEN -180 AND 180
   AND r.longitude BETWEEN -90  AND 90
 ORDER BY r.rider_slug, r.stage_id, r.time
-LIMIT 100
