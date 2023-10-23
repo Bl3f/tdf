@@ -4,8 +4,8 @@ SELECT
     activity_id,
     updated_at,
     time,
-    latitude,
-    longitude,
+    latitude::DECIMAL(8,6),
+    longitude::DECIMAL(8,6),
     altitude,
     temp,
     watts,
@@ -16,3 +16,6 @@ SELECT
     distance,
     heartrate
 FROM {{ source('lake', 'race') }}
+WHERE
+    latitude BETWEEN -180 AND 180
+    AND longitude BETWEEN -90  AND 90
