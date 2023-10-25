@@ -1,6 +1,6 @@
 SELECT
+    COALESCE(strava, slug) AS slug,
     name,
-    slug,
     bib,
     team,
     country,

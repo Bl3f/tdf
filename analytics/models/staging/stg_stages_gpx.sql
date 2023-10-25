@@ -3,6 +3,7 @@ SELECT
     index,
     latitude,
     longitude,
+    ST_GEOGPOINT(longitude, latitude) AS point,
     altitude,
     slope,
     dvdone,

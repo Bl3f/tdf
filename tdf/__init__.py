@@ -9,7 +9,7 @@ all_assets = load_assets_from_modules([assets])
 
 gcs = GCSResource(
     project="blef-data-platform",
-    service_account_json=EnvVar("SERVICE_ACCOUNT_JSON"),
+    service_account_json=EnvVar("SERVICE_ACCOUNT_BASE64"),
 )
 
 

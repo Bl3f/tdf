@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_riders
+    columns:
+      - name: name
+        description: Name of the rider, with first and lastname (format "First Lastname").
+      - name: slug
+        description: Slug of the rider in the official Tour data.
+      - name: bib
+        description: bib number, each number is unique
+        tests:
+          - unique
+          - not_null
+      - name: team
+        description: Slug of the team name.
+      - name: country
+        description: ISO-3 of the country (for instance FRA means France).
+      - name: strava
+        description: Strava profile id. If null it means the users was not on Strava.
+      - name: height
+        description: Height in cm for procyclingstats.
+      - name: weight
+        description: Weight in kg for procyclingstats.
+      - name: birthday
+        description: Birthdate of the rider in string format. It has to be parsed.

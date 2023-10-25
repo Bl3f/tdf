@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: stages_duration_per_rider
+    columns:
+      - name: rider_slug
+        description: The Strava profile id.
+      - name: stage_id
+        description: The Tour stage id, from 1 to 21.
+      - name: duration
+        description: Time in seconds (s) the rider took to complete the stage from the start line to the finish line.
+      - name: timeseries
+        description: | 
+          A timeseries of the GPX trace for this stage. The struct contains 't' as the time since the starting
+          line, 'x' as longitude and 'y' as latitude.

@@ -34,3 +34,11 @@ analytics:
         s3_access_key_id: "{{ env_var('ACCESS_KEY_ID') }}"
         s3_secret_access_key: "{{ env_var('ACCESS_KEY_SECRET') }}"
         s3_endpoint: storage.googleapis.com
+    bigquery-prod:
+      type: bigquery
+      method: service-account-json
+      project: blef-data-platform
+      dataset: letour
+      location: EU
+      threads: 1
+      keyfile_json: "{{ fromjson(env_var('SERVICE_ACCOUNT_JSON')) }}"

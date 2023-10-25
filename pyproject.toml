@@ -14,9 +14,11 @@ dagster-pandas = "^0.20.7"
 dagster-gcp = "^0.20.7"
 gcsfs = "^2023.6.0"
 dagster-dbt = "^0.20.7"
-dbt-duckdb = "^1.6.1"
+dbt-duckdb = "1.6.0"
 duckdb = "0.9.1"
 bdp-contracts = "^0.1.0"
+s3fs = "^2023.10.0"
+dbt-bigquery = "^1.6.7"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.12.0"
