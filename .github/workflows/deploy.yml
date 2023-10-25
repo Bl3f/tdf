@@ -43,7 +43,8 @@ jobs:
           path: project-repo
 
       - run: "pip install dbt-core==1.6.0"
-      - run: "dbt deps --project-dir $GITHUB_WORKSPACE/project-repo/dbt_project"
+      - run: "pip install -U click"
+      - run: "dbt deps --project-dir $GITHUB_WORKSPACE/project-repo/analytics"
           
       - name: Python Executable Deploy
         if: steps.prerun.outputs.result == 'pex-deploy'
