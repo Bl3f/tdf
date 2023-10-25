@@ -14,17 +14,22 @@ def generate_dbt_sources(sources_file):
                 sources = {"name": "lake", "tables": []}
 
             if contract.partition_column:
-                external_location = f"""'s3://{{{{ env_var("GCS_BUCKET_NAME") }}}}/{contract.name}/*.parquet'"""
+                external_location = f"gs://{{{{ env_var('GCS_BUCKET_NAME') }}}}/{contract.name}/*.parquet"
             else:
-                external_location = f"""'s3://{{{{ env_var("GCS_BUCKET_NAME") }}}}/{contract.name}.parquet'"""
+                external_location = f"gs://{{{{ env_var('GCS_BUCKET_NAME') }}}}/{contract.name}.parquet"
 
             source = {
                 "name": contract.name,
                 "description": contract.description,
-                "columns": contract.get_dbt_serialization(),
+                "columns": contract.get_dbt_serialization(with_bigquery_typing=True),
+                "external": {
+                    "location": external_location,
+                    "options": {
+                        "format": "parquet",
+                    },
+                },
                 "meta": {
                     "dagster": {"asset_key": contract.name},
-                    "external_location": external_location,
                 },
             }
             sources["tables"].append(source)

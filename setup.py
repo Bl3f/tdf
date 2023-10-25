@@ -16,7 +16,7 @@ setup(
         "dbt-core == 1.6.0",
         "dbt-duckdb == 1.6.1",
         "duckdb == 0.9.1",
-        "bdp-contracts == 0.1.2",
+        "bdp-contracts == 0.1.3",
         "dbt-bigquery == 1.6.7",
         "s3fs == 2023.10.0",
     ],

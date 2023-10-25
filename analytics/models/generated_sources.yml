@@ -7,8 +7,73 @@ sources:
     description: Strava activity data for a specific rider, stage and time. An activity
       contains GPS and physical data that might be null. For a given rider + stage
       you get an activity timeseries.
+    columns:
+    - name: rider_slug
+      type: str
+      description: The Strava profile id.
+      data_type: STRING
+    - name: stage_id
+      type: int
+      description: The Tour stage id, from 1 to 21.
+      data_type: INT64
+    - name: activity_id
+      type: str
+      description: The Strava activity id, only useful for debugging.
+      data_type: STRING
+    - name: updated_at
+      type: date
+      description: When the data has been updated in the database.
+      data_type: DATETIME
+    - name: time
+      type: float
+      description: Time in seconds since the beginning of the activity.
+      data_type: FLOAT64
+    - name: latitude
+      type: float
+      description: Latitude for the given time.
+      data_type: FLOAT64
+    - name: longitude
+      type: float
+      description: Longitude for the given time.
+      data_type: FLOAT64
+    - name: altitude
+      type: float
+      description: Altitude for the given time.
+      data_type: FLOAT64
+    - name: temp
+      type: float
+      description: Temperature in celsius degrees.
+      data_type: FLOAT64
+    - name: watts
+      type: float
+      description: Strava computed power.
+      data_type: FLOAT64
+    - name: moving
+      type: float
+      description: A boolean field that indicates if the rider is moving.
+      data_type: FLOAT64
+    - name: velocity_smooth
+      type: float
+      description: Speed computed by Strava in meters per second.
+      data_type: FLOAT64
+    - name: grade_smooth
+      type: float
+      description: Grade smooth computed by Strava as percents of a grade.
+      data_type: FLOAT64
+    - name: cadence
+      type: float
+      description: Rider rotation in rotations per minute.
+      data_type: FLOAT64
+    - name: distance
+      type: float
+      description: Distance done since the beginning of the activity in meters.
+      data_type: FLOAT64
+    - name: heartrate
+      type: float
+      description: Rider heartrate in beats per minute.
+      data_type: FLOAT64
     external:
-      location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/race/*.parquet'
+      location: gs://{{ env_var('GCS_BUCKET_NAME') }}/race/*.parquet
       options:
         format: parquet
     meta:
@@ -16,8 +81,46 @@ sources:
         asset_key: race
   - name: riders
     description: List of all the 2023 Tour de France riders.
+    columns:
+    - name: name
+      type: str
+      description: Firstname and Lastname of the rider.
+      data_type: STRING
+    - name: slug
+      type: str
+      description: "Official slug\u2014a slug is a url compliant nickname."
+      data_type: STRING
+    - name: bib
+      type: int
+      description: Official rider number.
+      data_type: INT64
+    - name: team
+      type: str
+      description: Team name of the rider.
+      data_type: STRING
+    - name: country
+      type: str
+      description: 3-letters country isocode.
+      data_type: STRING
+    - name: strava
+      type: str
+      description: Stava id, if null the rider is not on strava.
+      data_type: STRING
+    - name: height
+      type: int
+      description: Height in cm from procyclingstats.
+      data_type: INT64
+    - name: weight
+      type: float
+      description: Weight in kg from procyclingstats.
+      data_type: FLOAT64
+    - name: birthday
+      type: str
+      description: Birthdate from procyclingstats, but not in a nice date format.
+        It has to be parsed.
+      data_type: STRING
     external:
-      location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/riders.parquet'
+      location: gs://{{ env_var('GCS_BUCKET_NAME') }}/riders.parquet
       options:
         format: parquet
     meta:
@@ -25,8 +128,49 @@ sources:
         asset_key: riders
   - name: stages_info
     description: Static information about stages.
+    columns:
+    - name: stage
+      type: int
+      description: The Tour stage id, from 1 to 21.
+      data_type: INT64
+    - name: date
+      type: str
+      description: The date the stage was held.
+      data_type: STRING
+    - name: start_latitude
+      type: float
+      description: Official start latitude (but hand-picked).
+      data_type: FLOAT64
+    - name: start_longitude
+      type: float
+      description: Official start longitude (but hand-picked).
+      data_type: FLOAT64
+    - name: start_0_latitude
+      type: float
+      description: Official km0 start latitude (but hand-picked).
+      data_type: FLOAT64
+    - name: start_0_longitude
+      type: float
+      description: Official km0 start longitude (but hand-picked).
+      data_type: FLOAT64
+    - name: end_latitude
+      type: float
+      description: Official end latitude (but hand-picked).
+      data_type: FLOAT64
+    - name: end_longitude
+      type: float
+      description: Official end longitude (but hand-picked).
+      data_type: FLOAT64
+    - name: start_label
+      type: str
+      description: Official start label.
+      data_type: STRING
+    - name: end_label
+      type: str
+      description: Official end label.
+      data_type: STRING
     external:
-      location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/stages_info.parquet'
+      location: gs://{{ env_var('GCS_BUCKET_NAME') }}/stages_info.parquet
       options:
         format: parquet
     meta:
@@ -35,8 +179,53 @@ sources:
   - name: stages
     description: Official GPS tracks of the stages, the CSV is sorted from the beginning
       to the end.
+    columns:
+    - name: latitude
+      type: float
+      description: Latitude of the point.
+      data_type: FLOAT64
+    - name: longitude
+      type: float
+      description: Longitude of the point.
+      data_type: FLOAT64
+    - name: altitude
+      type: float
+      description: Altitude of the point.
+      data_type: FLOAT64
+    - name: slope
+      type: int
+      description: Compute slope of the point.
+      data_type: INT64
+    - name: dvdone
+      type: int
+      description: How much altitude difference has been done.
+      data_type: INT64
+    - name: dvrest
+      type: int
+      description: How much altitude difference remains.
+      data_type: INT64
+    - name: kmdone
+      type: float
+      description: How many kms has been done.
+      data_type: FLOAT64
+    - name: kmto
+      type: float
+      description: How many kms remains.
+      data_type: FLOAT64
+    - name: cpnumero
+      type: float
+      description: Checkpoint number.
+      data_type: FLOAT64
+    - name: cptype
+      type: str
+      description: The type of checkpoint (sprint, summit, etc.).
+      data_type: STRING
+    - name: sumcategory
+      type: str
+      description: Category of the summit (HC, 1, 2, 3).
+      data_type: STRING
     external:
-      location: 'gs://{{ env_var("GCS_BUCKET_NAME") }}/stages.parquet'
+      location: gs://{{ env_var('GCS_BUCKET_NAME') }}/stages.parquet
       options:
         format: parquet
     meta:
