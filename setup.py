@@ -17,6 +17,8 @@ setup(
         "dbt-duckdb == 1.6.1",
         "duckdb == 0.9.1",
         "bdp-contracts == 0.1.2",
+        "dbt-bigquery == 1.6.7",
+        "s3fs == 2023.10.0",
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
 )

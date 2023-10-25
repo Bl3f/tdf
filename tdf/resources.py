@@ -85,7 +85,7 @@ class DbtResource(DbtCliResource):
             if action == "parse":
                 yield cli.target_path.joinpath("manifest.json")
 
-        except DagsterDbtCliRuntimeError as er:
+        except DagsterDbtCliRuntimeError:
             raise DbtCliError(
                 action=action,
                 events=events,
