@@ -1,6 +1,6 @@
 from typing import Any, Mapping, Optional
 
-from dagster_dbt import DagsterDbtTranslator, DbtCliResource, dbt_assets
+from dagster_dbt import DagsterDbtTranslator, dbt_assets
 
 from dagster import OpExecutionContext
 from tdf.resources import DbtResource, dbt_manifest_path
@@ -16,4 +16,5 @@ class CustomDagsterDbtTranslator(DagsterDbtTranslator):
     dagster_dbt_translator=CustomDagsterDbtTranslator(),
 )
 def analytics_dbt_assets(context: OpExecutionContext, dbt: DbtResource):
+    yield from dbt.cli(["run-operation", "stage_external_sources"], manifest=dbt_manifest_path).stream()
     yield from dbt.build(context)
