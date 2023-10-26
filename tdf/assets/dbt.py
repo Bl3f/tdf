@@ -9,6 +9,9 @@ from tdf.resources import DbtResource, dbt_manifest_path
 
 class CustomDagsterDbtTranslator(DagsterDbtTranslator):
     def get_group_name(self, dbt_resource_props: Mapping[str, Any]) -> Optional[str]:
+        name = dbt_resource_props['name']
+        if 'stg' in name:
+            return "warehouse_staging"
         return "warehouse"
 
 

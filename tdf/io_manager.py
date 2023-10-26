@@ -21,7 +21,9 @@ class PandasParquetIOManager(UPathIOManager):
         self.credentials = credentials
 
     def dump_to_path(self, context: OutputContext, obj: pd.DataFrame, path: UPath):
-        obj.to_parquet(path, storage_options={"token": self.credentials}, coerce_timestamps="ms")
+        obj.to_parquet(
+            path, storage_options={"token": self.credentials}, coerce_timestamps="ms"
+        )
 
         if "contract" in context.metadata:
             contract = context.metadata["contract"]

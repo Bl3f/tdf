@@ -14,13 +14,13 @@ from tdf.resources import BigQueryResource
 @asset(
     group_name="quality",
     compute_kind="datadrift",
-    deps=[get_asset_key_for_model([analytics_dbt_assets], "stages_duration_per_rider")],
+    deps=[get_asset_key_for_model([analytics_dbt_assets], "stages_results_per_rider")],
 )
-def store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
+def stages_results_store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
     df = pd.read_gbq(
         """
-        SELECT id AS unique_key, rider_slug, stage_id, date, duration 
-        FROM letour.stages_duration_per_rider;
+        SELECT id AS unique_key, rider_slug, stage_id, date, duration, min_heartrate, max_heartrate, avg_heartrate, speed
+        FROM letour.stages_results_per_rider;
         """,
         credentials=bigquery.credentials,
     )
@@ -28,7 +28,31 @@ def store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
     github_connector.store_metric(
         dataframe=df,
         ghClient=Github(os.getenv("DATADRIFT_TOKEN")),
-        filepath=f"{os.getenv('DATADRIFT_REPO')}/stages_duration_per_rider.test.csv",
+        filepath=f"{os.getenv('DATADRIFT_REPO')}/stages_results_per_rider.test.csv",
+        drift_evaluator=auto_merge_drift,
+    )
+
+    return df
+
+
+@asset(
+    group_name="quality",
+    compute_kind="datadrift",
+    deps=[get_asset_key_for_model([analytics_dbt_assets], "stages_metrics")],
+)
+def stages_metrics_store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
+    df = pd.read_gbq(
+        """
+        SELECT stage AS unique_key, date, duration, distance
+        FROM letour.stages_metrics;
+        """,
+        credentials=bigquery.credentials,
+    )
+
+    github_connector.store_metric(
+        dataframe=df,
+        ghClient=Github(os.getenv("DATADRIFT_TOKEN")),
+        filepath=f"{os.getenv('DATADRIFT_REPO')}/stages_metrics.test.csv",
         drift_evaluator=auto_merge_drift,
     )
 
