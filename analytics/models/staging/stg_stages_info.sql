@@ -11,7 +11,6 @@ SELECT
     date,
     start_label,
     end_label,
-    ST_LENGTH(g.path) AS distance,
     g.path
 FROM {{ source('lake', 'stages_info') }} i
 LEFT JOIN stages_gpx g ON LPAD(CAST(i.stage AS STRING), 2, '0') = g.stage_id
