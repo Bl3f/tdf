@@ -43,7 +43,7 @@ def stages_results_store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
 def stages_metrics_store_metric(bigquery: BigQueryResource) -> pd.DataFrame:
     df = pd.read_gbq(
         """
-        SELECT stage AS unique_key, date, duration, distance
+        SELECT stage AS unique_key, date, distance
         FROM letour.stages_metrics;
         """,
         credentials=bigquery.credentials,
