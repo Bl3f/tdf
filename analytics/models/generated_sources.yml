@@ -23,7 +23,7 @@ sources:
     - name: updated_at
       type: date
       description: When the data has been updated in the database.
-      data_type: STRING
+      data_type: INT64
     - name: time
       type: float
       description: Time in seconds since the beginning of the activity.
