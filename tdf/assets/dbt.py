@@ -18,5 +18,8 @@ class CustomDagsterDbtTranslator(DagsterDbtTranslator):
 )
 def analytics_dbt_assets(context: OpExecutionContext, dbt: DbtResource):
     macro_args = {"vars": "ext_full_refresh: true"}
-    yield from dbt.cli(["run-operation", "stage_external_sources", "--vars", "ext_full_refresh: true"], manifest=dbt_manifest_path).stream()
+    yield from dbt.cli(
+        ["run-operation", "stage_external_sources", "--vars", "ext_full_refresh: true"],
+        manifest=dbt_manifest_path,
+    ).stream()
     yield from dbt.build(context)

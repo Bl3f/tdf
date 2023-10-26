@@ -5,7 +5,9 @@ from typing import List, Optional
 
 import pandas as pd
 from dagster_dbt import DagsterDbtCliRuntimeError, DbtCliResource
+from dagster_gcp import BigQueryResource as DagsterBigQueryResource
 from dagster_gcp import GCSResource as DagsterGCSResource
+from dagster_gcp import bigquery
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
 from pydantic import Field
@@ -56,6 +58,28 @@ class GCSResource(DagsterGCSResource):
 
     def get_client(self) -> storage.Client:
         return storage.client.Client(project=self.project, credentials=self.credentials)
+
+
+class BigQueryResource(DagsterBigQueryResource):
+    service_account_json: Optional[str] = Field(
+        default=None, description="Credentials file content encoded in base64"
+    )
+
+    @property
+    def credentials(self) -> Credentials:
+        decoded_service_account_json = json.loads(
+            base64.b64decode(self.service_account_json)
+        )
+
+        return Credentials.from_service_account_info(
+            decoded_service_account_json
+        ).with_scopes(
+            [
+                "https://www.googleapis.com/auth/bigquery",
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/drive",
+            ]
+        )
 
 
 class DbtCliError(Failure):

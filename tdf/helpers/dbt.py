@@ -16,7 +16,9 @@ def generate_dbt_sources(sources_file):
             if contract.partition_column:
                 external_location = f"gs://{{{{ env_var('GCS_BUCKET_NAME') }}}}/{contract.name}/*.parquet"
             else:
-                external_location = f"gs://{{{{ env_var('GCS_BUCKET_NAME') }}}}/{contract.name}.parquet"
+                external_location = (
+                    f"gs://{{{{ env_var('GCS_BUCKET_NAME') }}}}/{contract.name}.parquet"
+                )
 
             source = {
                 "name": contract.name,

@@ -19,6 +19,8 @@ setup(
         "bdp-contracts == 0.1.3",
         "dbt-bigquery == 1.6.7",
         "s3fs == 2023.10.0",
+        "pandas-gbq == 0.19.2",
+        "driftdb == 0.0.1-alpha.9",
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
 )

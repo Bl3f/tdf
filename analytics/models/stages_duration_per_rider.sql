@@ -42,11 +42,13 @@ SELECT
   CONCAT(r.rider_slug, '-', r.stage_id) AS id,
   r.rider_slug,
   r.stage_id,
+  s.date,
   MAX(t.end_time - t.start_time) AS duration,
   ARRAY_AGG(TO_JSON(STRUCT(r.time - t.start_time AS t, r.point AS coordinates, r.heartrate AS heartrate)) ORDER BY r.time - t.start_time ASC) AS points,
   ST_MAKELINE(ARRAY_AGG(IF(MOD(CAST(r.time - t.start_time AS INT64), 3) = 0, r.point, NULL) IGNORE NULLS ORDER BY r.time - t.start_time ASC)) AS line
 FROM {{ ref("stg_race") }} r
 LEFT JOIN times t ON r.rider_slug = t.rider_slug AND r.stage_id = t.stage_id
+LEFT JOIN {{ ref("stg_stages_info") }} s ON r.stage_id = s.stage
 WHERE
   r.time >= t.start_time AND time <= t.end_time
-GROUP BY id, r.rider_slug, r.stage_id
+GROUP BY id, r.rider_slug, r.stage_id, s.date
