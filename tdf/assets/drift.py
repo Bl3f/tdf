@@ -11,7 +11,6 @@ from tdf.assets import analytics_dbt_assets
 from tdf.resources import BigQueryResource
 
 
-
 @asset(
     group_name="quality",
     compute_kind="datadrift",

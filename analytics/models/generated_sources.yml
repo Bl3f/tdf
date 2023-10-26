@@ -23,7 +23,7 @@ sources:
     - name: updated_at
       type: date
       description: When the data has been updated in the database.
-      data_type: DATETIME
+      data_type: TIMESTAMP
     - name: time
       type: float
       description: Time in seconds since the beginning of the activity.
@@ -180,6 +180,14 @@ sources:
     description: Official GPS tracks of the stages, the CSV is sorted from the beginning
       to the end.
     columns:
+    - name: stage_id
+      type: str
+      description: The Tour stage id, from 1 to 21.
+      data_type: STRING
+    - name: index
+      type: int
+      description: Index of the point in the GPS trace
+      data_type: INT64
     - name: latitude
       type: float
       description: Latitude of the point.
